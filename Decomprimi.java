@@ -22,7 +22,7 @@ class Decomprimi{
         
 
         // Scrivo su file
-        try (FileWriter writer = new FileWriter( args[0] )) {
+        try (FileWriter writer = new FileWriter( "output.txt" )) { //args[0] )) {
             writer.write( bwt );
         } catch (IOException e) {
             System.err.println("Errore durante la scrittura del file: " + e.getMessage());
