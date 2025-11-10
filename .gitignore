@@ -1,2 +1,4 @@
 #file compilati
 *.class
+#eventuali file di test
+*.txt
