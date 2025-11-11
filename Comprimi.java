@@ -22,14 +22,15 @@ class Comprimi{
         // String comprimi = CodiceHuffman.codificaHuffman( rle );//bwt + mtf + huffman
         // System.out.println("Codifica di Huffamn fatta");
 
-        String lz77 = LZ77.codificaLZ77(testo);
+        String lz77 = LZ77.codificaLZ77(testo); //lz77
         System.out.println("Codifica lz77 fatta");
+
+        String comprimi = lz77;
         
-        // System.out.println("lunghezza testo finale: " + comprimi );
+        System.out.println("lunghezza testo finale: " + comprimi.length() );
         // Scrivo su file
-        try (FileWriter writer = new FileWriter( args[0 ] )) {
-            // writer.write( comprimi );
-            writer.write( lz77 );
+        try (FileWriter writer = new FileWriter( args[0] )) {
+            writer.write( comprimi );
         } catch (IOException e) {
             System.err.println("Errore durante la scrittura del file: " + e.getMessage());
         }
