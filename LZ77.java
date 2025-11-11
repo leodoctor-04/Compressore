@@ -17,10 +17,7 @@ public class LZ77 {
             matchLenght--;
 
             //trovo posizione match più lungo
-            int back = 0;
-            while( !window.substring( window.length()-back , window.length() ).contains( input.subSequence(i, i+matchLenght) ) ){
-                back++;
-            }
+            int back = window.length() - window.indexOf( input.subSequence(i, i+matchLenght).toString() );
 
             //aggiungo la stringa
             i+=matchLenght;
@@ -35,15 +32,13 @@ public class LZ77 {
 
     public static String decodificaLZ77(String input) {
         String output = "";
-        int i=0;
-        while( i<input.length() ){
+        for (int i = 0; i<input.length(); i = i+3) {
 
             int back = input.charAt(i);
             int matchLenght = input.charAt(i+1);
             char nextChar = input.charAt(i+2);
             
             output += output.substring( output.length()-back, output.length()-back+matchLenght ) + nextChar; //<back, lenght, nextchar>
-            i += 3;
         }
         return output;
     }
