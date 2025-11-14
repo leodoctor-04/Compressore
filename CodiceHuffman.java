@@ -2,6 +2,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 class CodiceHuffman {
@@ -25,28 +26,49 @@ class CodiceHuffman {
             }
         }
 
-        Nodo root = Nodo.creaAlbero(symbols);
-        symbols.clear();
 
-        //trasformo in binario
-        String codifica = "";
-        for (int i = 0; i < n; i++){
-            codifica += root.ricerca( input.charAt(i) );
+        Nodo root = Nodo.creaAlbero(symbols);
+        System.out.println("albero creato");
+            
+        HashMap<Character, String> map = new HashMap<>();
+        for (Nodo c : symbols){
+            map.put( c.simboli.charAt(0), root.ricerca(c.simboli.charAt(0)) );
         }
+        symbols.clear();
+        
+        String codifica = "";
+        int partionLength = 100000;
+        Codifica[] cod = new Codifica[ n/partionLength ];
+
+        for(int i = 0; i < n/partionLength; i++){
+            cod[i] = new Codifica(map, input.substring( i*partionLength, (i+1)*partionLength   ));
+            cod[i].start();
+        }
+
+        for(int i = 0; i < n/partionLength; i ++){
+            try {
+                cod[i].join();
+                codifica += cod[i].getCodificato();
+            } catch (InterruptedException ex) {
+            }
+        }
+        //codifico i simboli rimanenti
+        for(int i = (n/partionLength)*partionLength ; i < n; i++){
+            codifica += map.get( input.charAt(i) );
+        }
+
+        System.out.println("testo binarizzato");
         
         String compresso = root.codifica() + "**";
         int i=0;
-        String binaryString = "1";
+        String binaryString = "";
         while ( i<codifica.length() ){
-            binaryString += codifica.charAt(i);
-            if( binaryString.length() >= 8 ){
-                compresso = compresso + (char) Integer.parseInt(binaryString, 2);
-                binaryString = "1";
-            }
-            i++;
+            binaryString = "1" + codifica.substring(i, i+7); // 8 caratteri
+            compresso = compresso + (char) Integer.parseInt(binaryString, 2);
+            i= i+7;
         }
         if( binaryString.length() > 1 ){
-            compresso = compresso + (char) Integer.parseInt(binaryString, 2);
+            compresso = compresso + (char) Integer.parseInt( codifica.substring(i, codifica.length()), 2);
         }
 
         return compresso;
@@ -71,6 +93,10 @@ class CodiceHuffman {
         }
 
         Nodo root = Nodo.creaAlbero( symbols );
+        HashMap<String, Character> map = new HashMap<>();
+        for (Nodo c : symbols){
+            map.put( root.ricerca(c.simboli.charAt(0)), c.simboli.charAt(0)  );
+        }
         symbols.clear();
         
         //ritrasformo il testo in binario
@@ -81,13 +107,13 @@ class CodiceHuffman {
              i++;
         }
 
-        
         String decompresso = "";
         String c = "";
-        while( codificato.length()>0 ){
-            while( root.ricerca(c) == null && codificato.length()>0 ){
-                c += codificato.charAt(0);
-                codificato = codificato.substring(1);
+        int index = 0;
+        while( index<codificato.length() ){
+            while( map.get(c) == null && index<codificato.length() ){
+                c += codificato.charAt(index);
+                index++;
             }
             decompresso = decompresso + root.ricerca( c );
             c="";
@@ -112,28 +138,31 @@ class Nodo{
     }
 
     public static Nodo creaAlbero( List< Nodo > symbols  ){
+        List< Nodo > alfabeto = new ArrayList<>();
+        for (Nodo s : symbols) {
+            alfabeto.add(s);
+        }
+        Collections.sort(alfabeto, Comparator.comparing(n -> n.simboli));
 
-        Collections.sort(symbols, Comparator.comparing(n -> n.simboli));
-
-        while ( symbols.size() > 1 ) {
+        while ( alfabeto.size() > 1 ) {
                 
-            symbols.sort( (a, b) -> {
+            alfabeto.sort( (a, b) -> {
                 if( a.prob < b.prob ) return -1;
                 else if( a.prob > b.prob ) return 1;
                 else return 0;
             } );
 
-            String s1 = symbols.get(0).simboli + symbols.get(1).simboli;
-            double p1 = symbols.get(0).prob + symbols.get(1).prob;
-            Nodo left = symbols.get(0);
-            Nodo right = symbols.get(1);
+            String s1 = alfabeto.get(0).simboli + alfabeto.get(1).simboli;
+            double p1 = alfabeto.get(0).prob + alfabeto.get(1).prob;
+            Nodo left = alfabeto.get(0);
+            Nodo right = alfabeto.get(1);
 
-            symbols.add( new Nodo( s1, p1, left, right ) );
-            symbols.remove(1);
-            symbols.remove(0);
+            alfabeto.add( new Nodo( s1, p1, left, right ) );
+            alfabeto.remove(1);
+            alfabeto.remove(0);
         
         }
-        return symbols.get(0);
+        return alfabeto.get(0);
     }
 
     public String ricerca( char c ){
@@ -175,5 +204,25 @@ class Nodo{
         return left.codifica() + " " + right.codifica();
 
     }
+}
 
+class Codifica extends Thread{
+    HashMap<Character, String> map;
+    String testo;
+    
+    Codifica( HashMap<Character,String> map, String testo ){
+        this.map = map;
+        this.testo = testo;
+    }
+
+    @Override
+    public void run() {
+        String codificato = "";
+        for (int i = 0; i < testo.length(); i++){
+            codificato += map.get( testo.charAt(i) );
+        }
+        testo = codificato;
+    }
+    
+    public String getCodificato(){ return testo; }
 }
