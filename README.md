@@ -30,3 +30,5 @@ Run lenght encoding: carattere e ripetizioni di fila
 Codice di Huffman: crea un albero binario unendo i due nodi con probabilità minore
 
 LZ77: insieme di triple che codificano stringhe già viste
+
+LZ78: insieme di tuple che codificano indice prefisso parola nel dizionario e il prossimo carattere

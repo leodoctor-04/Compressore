@@ -22,10 +22,13 @@ class Comprimi{
         // String huffman = CodiceHuffman.codificaHuffman( rle );//bwt + mtf + huffman
         // System.out.println("Codifica di Huffamn fatta");
 
-        // String lz77 = LZ77.codificaLZ77(huffman); //lz77
-        // System.out.println("Codifica lz77 fatta");
+        String lz77 = LZ77.codificaLZ77(testo); //lz77
+        System.out.println("Codifica lz77 fatta");
 
-        String comprimi = CodiceHuffman.codificaHuffman(testo);
+        // String lz78 = LZ78.codificaLZ78(testo); //lz78
+        // System.out.println("Codifica lz78 fatta");
+
+        String comprimi = lz77;
         
         System.out.println("lunghezza testo finale: " + comprimi.length() );
         // Scrivo su file

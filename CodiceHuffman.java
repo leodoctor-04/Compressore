@@ -26,15 +26,13 @@ class CodiceHuffman {
             }
         }
 
-
         Nodo root = Nodo.creaAlbero(symbols);
-        System.out.println("albero creato");
-            
         HashMap<Character, String> map = new HashMap<>();
         for (Nodo c : symbols){
             map.put( c.simboli.charAt(0), root.ricerca(c.simboli.charAt(0)) );
         }
         symbols.clear();
+
         
         String codifica = "";
         int partionLength = 100000;
@@ -57,17 +55,16 @@ class CodiceHuffman {
             codifica += map.get( input.charAt(i) );
         }
 
-        System.out.println("testo binarizzato");
         
         String compresso = root.codifica() + "**";
         int i=0;
         String binaryString = "";
-        while ( i<codifica.length() ){
+        while ( i+7 < codifica.length() ){
             binaryString = "1" + codifica.substring(i, i+7); // 8 caratteri
             compresso = compresso + (char) Integer.parseInt(binaryString, 2);
             i= i+7;
         }
-        if( binaryString.length() > 1 ){
+        if( codifica.length()%i != 0 ){//se avanzano caratteri
             compresso = compresso + (char) Integer.parseInt( codifica.substring(i, codifica.length()), 2);
         }
 

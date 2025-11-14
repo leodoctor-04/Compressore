@@ -10,7 +10,6 @@ class RunLengthEncoding {
             while( i < n ){
                 char currentChar = input.charAt(i);
                 int count = 1;
-
                 i++;
 
                 while ( i < n && input.charAt( i ) == currentChar ) {

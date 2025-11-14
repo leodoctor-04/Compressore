@@ -23,9 +23,7 @@ class Decomprimi{
 
         // Scrivo su file
         try (FileWriter writer = new FileWriter( args[0] )) {
-            // writer.write( bwt );
-            // writer.write( LZ77.decodificaLZ77(testo) );
-            writer.write( CodiceHuffman.decodificaHuffman( testo ) );
+            writer.write( LZ77.decodificaLZ77(testo) );
         } catch (IOException e) {
             System.err.println("Errore durante la scrittura del file: " + e.getMessage());
         }
