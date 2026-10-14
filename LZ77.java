@@ -61,7 +61,7 @@ public class LZ77 {
             output.append( nextChar );//<back, lenght, nextchar>
             System.out.print( "Decodifica in corso: " + i*100/input.length()  + "%\r" );
         }
-        System.out.println( "Decodifica in corso: 100%\t" + "maxback= " + maxBack + "\tmaxMatch= " + maxMatch );
+        System.out.println( "Decodifica in corso: 100%\t" );
         return output.toString();
     }
 

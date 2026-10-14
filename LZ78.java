@@ -2,38 +2,42 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class LZ78 {
 
     public static String codificaLZ78(String input) {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         List<Tupla> dizionario = new ArrayList<>();
         int i=0;
 
-        String parola;                  
+        StringBuilder parola = new StringBuilder();   
         while( i<input.length() ){
-            parola = "" + input.charAt(i);
+            parola.setLength(0); 
+            parola.append( input.charAt(i) );
             i++;
+            int index = -1;
+            int temp;
             //trovo la parola più lunga
-            while ( i<input.length() && Tupla.contains(dizionario, parola) >= 0 ) { 
-                parola += input.charAt(i);
+            while ( i<input.length() && ( temp = Tupla.contains(dizionario, parola.toString())) >= 0 ) { 
+                parola.append( input.charAt(i) );
+                index = temp;
                 i++;
             }
             
             //aggiungo la parola al dizionario
-            dizionario.add( new Tupla(
-                 Tupla.contains(dizionario, parola.substring(0,parola.length()-1) ),
-                 parola
-                ) );
+            dizionario.add( new Tupla( index, parola.toString() ) );
 
             //aggiungo parola all'output
-            output += "" + (char)(dizionario.getLast().getIndice()+1) + dizionario.getLast().getSimbolo();
+            output.append( (char)(dizionario.getLast().getIndice()+1) );
+            output.append( dizionario.getLast().getSimbolo() );
+            
+            System.out.print( "Codifica in corso: " + i*100/input.length()  + "%\r" );
         }
-        return output;
+        System.out.println( "Codifica in corso: 100%" );
+        return output.toString();
     }
 
     public static String decodificaLZ78(String input) {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         List<Tupla> dizionario = new ArrayList<>();
         for (int i = 0; i<input.length(); i = i+2) {
 
@@ -43,9 +47,11 @@ public class LZ78 {
                 dizionario.add( new Tupla(indice, dizionario.get(indice).getParola() + nextChar));
             } else dizionario.add( new Tupla(indice, ""+nextChar));
             
-            output += dizionario.getLast().getParola(); //<indice, nextchar>
+            output.append( dizionario.getLast().getParola() ); //<indice, nextchar>
+            System.out.print( "Decodifica in corso: " + i*100/input.length()  + "%\r" );
         }
-        return output;
+        System.out.println( "Decodifica in corso: 100%" );
+        return output.toString();
     }
 
 }
